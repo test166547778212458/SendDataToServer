@@ -7,16 +7,15 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+
+import app.RequestQueueSingleton;
 
 public class MainActivity extends AppCompatActivity {
     EditText message;
     Button send;
-    RequestQueue queue;
     String path="/getData.php";
     String server = "http://192.168.1.30/android";
     String curl = server+path;
@@ -29,12 +28,11 @@ public class MainActivity extends AppCompatActivity {
         send = (Button) findViewById(R.id.Send);
         message = (EditText) findViewById(R.id.editText2);
 
-        queue = Volley.newRequestQueue(this);
-
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, curl+"?op=2&msg="+message.getText().toString(),
+                StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                        curl+"?op=2&msg="+message.getText().toString(),
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
@@ -48,8 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 });
                 message.setText("");
                 // Add the request to the RequestQueue.
-                queue.add(stringRequest);
-                //queue.start();
+                RequestQueueSingleton.getInstance().addToRequestQueue(stringRequest);
             }
         });
 
