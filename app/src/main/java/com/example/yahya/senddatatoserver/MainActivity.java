@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     String server = "http://192.168.1.30/android";
     String curl = server+path;
 
+    private ProgressDialog pDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,9 +38,15 @@ public class MainActivity extends AppCompatActivity {
         send = (Button) findViewById(R.id.Send);
         message = (EditText) findViewById(R.id.editText2);
 
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading...");
+        pDialog.setCancelable(false);
+
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                
+                showpDialog();
 
                 String encodedMessage = null;
                 try {
@@ -53,11 +61,13 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onResponse(String response) {
                                 Log.d(TAG, response.toString());
+                                hidepDialog();
                             }
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d(TAG, "Error: " + error.getMessage());
+                        hidepDialog();
                     }
                 });
                 message.setText("");
@@ -66,5 +76,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void showpDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hidepDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
     }
 }
